@@ -37,6 +37,8 @@ enum CalculatorAction: Hashable {
     case operate(CalculatorOperation)
     case equals
     case scientific(ScientificFunction)
+    case openParen
+    case closeParen
 }
 
 enum CalculatorOperation: String, Hashable {
@@ -45,6 +47,7 @@ enum CalculatorOperation: String, Hashable {
     case multiply = "×"
     case divide = "÷"
     case power = "xʸ"
+    case mod = "mod"
 }
 
 enum ScientificFunction: String, Hashable {
@@ -64,5 +67,4 @@ enum ScientificFunction: String, Hashable {
     case tenPower = "10ˣ"
     case pi = "π"
     case e
-    case mod = "mod"
 }

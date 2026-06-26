@@ -2,7 +2,8 @@
 //  PortraitCalculatorView.swift
 //  DemonicCalc333
 //
-//  Mirrors the classic stock iPhone Calculator layout (4x5 grid).
+//  Mirrors the classic stock iPhone Calculator layout, extended with a
+//  parentheses row and a live result preview above the display.
 //
 
 import SwiftUI
@@ -22,10 +23,16 @@ struct PortraitCalculatorView: View {
 
                 Spacer(minLength: 0)
 
-                DisplayView(text: engine.display, fontSize: 72)
-                    .padding(.horizontal, 4)
+                DisplayView(
+                    expression: engine.expressionPreview,
+                    text: engine.display,
+                    preview: engine.resultPreview,
+                    fontSize: 68
+                )
+                .padding(.horizontal, 4)
 
                 VStack(spacing: spacing) {
+                    parenRow(buttonSize: buttonSize)
                     row(["AC", "±", "%", "÷"], buttonSize: buttonSize)
                     row(["7", "8", "9", "×"], buttonSize: buttonSize)
                     row(["4", "5", "6", "−"], buttonSize: buttonSize)
@@ -35,6 +42,21 @@ struct PortraitCalculatorView: View {
             }
             .padding(.horizontal, spacing)
             .padding(.bottom, spacing)
+        }
+    }
+
+    @ViewBuilder
+    private func parenRow(buttonSize: CGFloat) -> some View {
+        HStack(spacing: spacing) {
+            CalculatorButtonView(title: "(", style: .function, fontSize: 26) {
+                engine.perform(.openParen)
+            }
+            .frame(width: buttonSize * 2 + spacing, height: buttonSize)
+
+            CalculatorButtonView(title: ")", style: .function, fontSize: 26) {
+                engine.perform(.closeParen)
+            }
+            .frame(width: buttonSize * 2 + spacing, height: buttonSize)
         }
     }
 

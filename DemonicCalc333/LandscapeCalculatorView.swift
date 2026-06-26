@@ -14,11 +14,11 @@ struct LandscapeCalculatorView: View {
 
     private let spacing: CGFloat = 10
 
-    private let scientificRows: [[ScientificFunction]] = [
-        [.pi, .e, .factorial, .mod],
-        [.square, .cube, .selfPower, .reciprocal],
-        [.squareRoot, .cubeRoot, .log, .ln],
-        [.sin, .cos, .tan, .exp]
+    private let scientificRows: [[String]] = [
+        ["π", "e", "x!", "mod"],
+        ["x²", "x³", "xˣ", "1/x"],
+        ["√x", "∛x", "log", "ln"],
+        ["sin", "cos", "tan", "eˣ"]
     ]
 
     var body: some View {
@@ -46,13 +46,13 @@ struct LandscapeCalculatorView: View {
             DemonicTitle()
             ForEach(scientificRows, id: \.self) { row in
                 HStack(spacing: spacing) {
-                    ForEach(row, id: \.self) { function in
+                    ForEach(row, id: \.self) { title in
                         CalculatorButtonView(
-                            title: function.rawValue,
+                            title: title,
                             style: .accent,
                             fontSize: 18
                         ) {
-                            engine.perform(.scientific(function))
+                            engine.perform(scientificAction(for: title))
                         }
                         .frame(width: columnWidth, height: buttonHeight)
                     }
@@ -65,7 +65,12 @@ struct LandscapeCalculatorView: View {
     @ViewBuilder
     private func standardPad(columnWidth: CGFloat, buttonHeight: CGFloat) -> some View {
         VStack(spacing: spacing) {
-            DisplayView(text: engine.display, fontSize: 54)
+            DisplayView(
+                expression: engine.expressionPreview,
+                text: engine.display,
+                preview: engine.resultPreview,
+                fontSize: 50
+            )
 
             row(["AC", "±", "%", "÷"], columnWidth: columnWidth, buttonHeight: buttonHeight)
             row(["7", "8", "9", "×"], columnWidth: columnWidth, buttonHeight: buttonHeight)
@@ -134,6 +139,28 @@ struct LandscapeCalculatorView: View {
         case "−": return .operate(.subtract)
         case "+": return .operate(.add)
         default: return .digit(title)
+        }
+    }
+
+    private func scientificAction(for title: String) -> CalculatorAction {
+        switch title {
+        case "mod": return .operate(.mod)
+        case "π": return .scientific(.pi)
+        case "e": return .scientific(.e)
+        case "x!": return .scientific(.factorial)
+        case "x²": return .scientific(.square)
+        case "x³": return .scientific(.cube)
+        case "xˣ": return .scientific(.selfPower)
+        case "1/x": return .scientific(.reciprocal)
+        case "√x": return .scientific(.squareRoot)
+        case "∛x": return .scientific(.cubeRoot)
+        case "log": return .scientific(.log)
+        case "ln": return .scientific(.ln)
+        case "sin": return .scientific(.sin)
+        case "cos": return .scientific(.cos)
+        case "tan": return .scientific(.tan)
+        case "eˣ": return .scientific(.exp)
+        default: return .scientific(.pi)
         }
     }
 }
